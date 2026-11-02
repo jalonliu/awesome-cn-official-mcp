@@ -162,7 +162,12 @@ def main() -> int:
     if args.report:
         Path(args.report).write_text(text, encoding="utf-8")
         print(f"报告写入 {args.report}")
-    print(text)
+    # Force UTF-8 output on Windows (GB18030 may reject emoji)
+    import io, sys
+    if hasattr(sys.stdout, 'buffer'):
+        sys.stdout.buffer.write((text + "\n").encode("utf-8"))
+    else:
+        print(text)
 
     return 1 if errs else 0
 
