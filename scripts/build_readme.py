@@ -142,6 +142,10 @@ def main() -> int:
 
     head, rest = text.split(START, 1)
     _, tail = rest.split(END, 1)
+    # Normalize tail leading whitespace: keep at most one blank line before next content
+    tail = tail.lstrip("\n")
+    if tail and not tail.startswith("\n"):
+        tail = "\n" + tail
     if args.check:
         if text != head + block + tail:
             print("README.md 目录区块与 services.json 不同步，请运行 python scripts/build_readme.py")

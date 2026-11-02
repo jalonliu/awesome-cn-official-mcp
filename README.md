@@ -131,8 +131,6 @@ python scripts/check.py --no-network --report out.md  # CI 模式
 
 <!-- CATALOG:END -->
 
-
-
 ## 数据说明
 
 - 每条条目均为结构化 JSON，包含 `id/name/vendor/category/mcp/skill/auth/docs` 等字段
