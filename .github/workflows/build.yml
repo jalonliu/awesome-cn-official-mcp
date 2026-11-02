@@ -5,10 +5,13 @@ on:
     paths:
       - data/services.json
       - scripts/**
+      - README.md
   pull_request:
     paths:
       - data/services.json
       - scripts/**
+      - README.md
+  workflow_dispatch:
 
 jobs:
   check:
