@@ -1,0 +1,36 @@
+name: Build & Check
+
+on:
+  push:
+    paths:
+      - data/services.json
+      - scripts/**
+  pull_request:
+    paths:
+      - data/services.json
+      - scripts/**
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/check.py --no-network --report out.md
+      - run: python scripts/build_readme.py
+      - name: Verify README diff is clean
+        run: |
+          if ! git diff --quiet README.md; then
+            echo "README.md not in sync with services.json"
+            echo "Run 'python scripts/build_readme.py' and commit the result"
+            git diff README.md
+            exit 1
+          fi
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: check-report
+          path: out.md

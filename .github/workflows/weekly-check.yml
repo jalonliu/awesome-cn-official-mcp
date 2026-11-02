@@ -1,0 +1,42 @@
+name: Weekly Link Check
+
+on:
+  schedule:
+    # 每周日凌晨 03:00 UTC
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/check.py --write --report out.md
+      - name: Create issue on failures
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('out.md', 'utf8');
+            const deadCount = (report.match(/^- ❌/g) || []).length;
+            const warnCount = (report.match(/^- ⚠️/g) || []).length;
+            const errorCount = (report.match(/^\- \[schema\]/gm) || []).length;
+            if (deadCount > 0 || warnCount > 0 || errorCount > 0) {
+              const title = `🔍 巡检告警 (${new Date().toISOString().slice(0,10)})`;
+              const body = report + '\n\n> 此 issue 由 GitHub Actions 自动创建';
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body
+              });
+            }
+      - name: Push updated data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update last_checked status"
+          file_pattern: data/services.json

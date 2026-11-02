@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ChinaOfficialMCPService",
+  "type": "object",
+  "required": ["id", "name", "category", "official", "docs", "verified_at"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,40}$",
+      "description": "小写短横线唯一标识，稳定不变"
+    },
+    "name": { "type": "string", "description": "中文服务名" },
+    "name_en": { "type": "string", "description": "英文服务名（可选）" },
+    "vendor": { "type": "string", "description": "运营主体" },
+    "category": {
+      "type": "string",
+      "enum": ["出行和生活", "办公和协作", "笔记阅读网盘", "搜索内容企业数据", "设计创作", "支付金融", "云和开发", "其他"]
+    },
+    "official": {
+      "type": "boolean",
+      "description": "true = 服务方自己发布（first-party）。本仓库只收录 true 的条目。"
+    },
+    "mcp": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "available": { "type": "boolean" },
+        "type": { "type": "string", "enum": ["stdio", "remote", "both", "unknown"] },
+        "endpoint": { "type": "string", "description": "远程 MCP 端点，含占位符如 <KEY>" },
+        "install": { "type": "string", "description": "安装命令，如 npx -y @amap/amap-maps-mcp-server" },
+        "url": { "type": "string", "description": "MCP 文档或仓库地址" }
+      },
+      "required": ["available"]
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "available": { "type": "boolean" },
+        "url": { "type": "string" }
+      },
+      "required": ["available"]
+    },
+    "auth": {
+      "type": "string",
+      "enum": ["none", "api_key", "oauth", "account", "enterprise", "unknown"]
+    },
+    "needs_key": { "type": "boolean" },
+    "client_required": { "type": "string", "description": "是否需要安装桌面客户端等前置条件" },
+    "docs": { "type": "string", "description": "官方文档首页，巡检主要目标" },
+    "notes": { "type": "string" },
+    "source": { "type": "string", "description": "首次收录来源" },
+    "verified_at": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "last_checked": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "status": {
+      "type": "string",
+      "enum": ["active", "deprecated", "unreachable"],
+      "description": "由巡检脚本写入"
+    }
+  }
+}
