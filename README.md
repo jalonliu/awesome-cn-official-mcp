@@ -18,11 +18,24 @@
 
 ## 使用方式
 
-```bash
-# 安装依赖
-python -m venv .venv && source .venv/bin/activate  # Linux/macOS
-.venv\Scripts\activate                              # Windows
+### 一键添加新服务
 
+```bash
+# 从推文/文档 URL 自动解析并添加
+python scripts/add_service.py --url https://x.com/.../status/...
+
+# 批量添加（每行一条 URL）
+python scripts/add_service.py --batch urls.txt
+
+# 交互式添加
+python scripts/add_service.py --interactive
+```
+
+脚本会自动：解析 URL → 生成条目 → 保存到 `data/services.json` → 重建 README → 巡检 → 提交推送。
+
+### 手动维护
+
+```bash
 # 重建 README 目录区块
 python scripts/build_readme.py
 
